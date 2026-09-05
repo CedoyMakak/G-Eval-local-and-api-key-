@@ -1,0 +1,12 @@
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+pydantic==2.11.4
+pydantic-settings==2.9.1
+openai==1.77.0
+httpx==0.28.1
+sacrebleu==2.5.1
+# Опционально: pip install sentence-transformers
+# без пакета семантический слой использует BoW-cosine.
+numpy==2.2.5
+scipy==1.15.2
+python-dotenv==1.1.0

@@ -5,8 +5,8 @@ pydantic-settings==2.9.1
 openai==1.77.0
 httpx==0.28.1
 sacrebleu==2.5.1
-# Опционально: pip install sentence-transformers
-# без пакета семантический слой использует BoW-cosine.
+sentence-transformers==3.4.1
 numpy==2.2.5
 scipy==1.15.2
 python-dotenv==1.1.0
+# Опционально для BERTScore: pip install bert-score

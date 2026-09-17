@@ -25,7 +25,7 @@ class OllamaProvider:
                 {"role": "user", "content": prompt},
             ],
         }
-        timeout = httpx.Timeout(60.0, connect=3.0)
+        timeout = httpx.Timeout(120.0, connect=3.0)
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(f"{self.base_url}/api/chat", json=payload)
             response.raise_for_status()

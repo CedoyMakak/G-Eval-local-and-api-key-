@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Линза — оценка качества ответов LLM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,620&family=IBM+Plex+Mono:wght@500&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css?v=8" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="7" />
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+          </svg>
+        </div>
+        <div>
+          <h1>Линза</h1>
+          <p>оценка качества ответов LLM</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="chip" id="healthChip" type="button"><span class="dot warn"></span> provider…</button>
+        <div class="theme-switch" role="group" aria-label="Тема">
+          <button type="button" id="themeDark">Ночь</button>
+          <button type="button" id="themeLight">День</button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="eval">Pointwise</button>
+      <button class="tab" data-tab="batch">Пакет</button>
+      <button class="tab" data-tab="judge">Judge</button>
+      <button class="tab" data-tab="pair">Pairwise</button>
+      <button class="tab" data-tab="journal">Журнал</button>
+      <button class="tab" data-tab="labels">HITL</button>
+      <button class="tab" data-tab="overview">Валидация</button>
+    </nav>
+
+    <section class="panel active" id="panel-eval">
+      <div class="grid">
+        <article class="card">
+          <h2>Pointwise</h2>
+          <p class="lede">ROUGE-L, BLEU, cosine и LLM-as-a-Judge (G-Eval) по готовому кандидату.</p>
+          <label for="question">Question</label>
+          <textarea id="question">Что такое столица Франции?</textarea>
+          <label for="answer">Candidate</label>
+          <textarea id="answer">Столица Франции — Париж.</textarea>
+          <label for="reference">Reference</label>
+          <input id="reference" type="text" value="Столица Франции — Париж." />
+          <label for="context">Context</label>
+          <textarea id="context" style="min-height:64px"></textarea>
+          <label class="checks"><input id="useJudge" type="checkbox" /> <span id="useJudgeLabel">G-Eval</span></label>
+          <div class="actions">
+            <button class="btn btn-primary" id="run" type="button">Оценить</button>
+            <button class="btn btn-ghost" id="fillBad" type="button">Контрпример</button>
+          </div>
+        </article>
+
+        <article class="card" id="resultCard">
+          <h2>Quality report</h2>
+          <p class="lede empty" id="resultEmpty">Нет отчёта.</p>
+          <div id="resultBody" hidden>
+            <div class="score-hero">
+              <div class="gauge" id="gauge" style="--p:0">
+                <div class="gauge-num"><b id="scorePct">0</b><span>из 100</span></div>
+              </div>
+              <div>
+                <p class="who" id="who"></p>
+                <p class="muted" id="confLine"></p>
+                <div class="flags" id="flags"></div>
+              </div>
+            </div>
+            <div class="metrics" id="dimCards"></div>
+            <div class="charts">
+              <div class="chart-box"><canvas id="radarChart"></canvas></div>
+              <div class="chart-box"><canvas id="layerChart"></canvas></div>
+            </div>
+            <div class="rationale" id="rationale"></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-batch">
+      <article class="card">
+        <h2>Пакет</h2>
+        <p class="lede">Загрузите JSON / JSONL / CSV (колонки <code>question</code>, <code>answer</code>, опционально <code>reference</code>, <code>context</code>). Максимум 100 пар. Клик по строке открывает пару в Pointwise.</p>
+        <div class="actions">
+          <label class="btn btn-ghost file-btn">Файл<input id="batchFile" type="file" accept=".json,.jsonl,.ndjson,.csv,.tsv,text/csv,application/json" /></label>
+          <button class="btn btn-ghost" id="batchSample" type="button">Демо-корпус</button>
+          <button class="btn btn-ghost" id="batchPasteBtn" type="button">Вставить текст</button>
+        </div>
+        <textarea id="batchText" hidden placeholder='[{"question":"…","answer":"…","reference":"…"}]'></textarea>
+        <div class="actions" id="batchPasteActions" hidden>
+          <button class="btn btn-ghost" id="batchParse" type="button">Разобрать</button>
+        </div>
+        <label class="checks"><input id="batchJudge" type="checkbox" /> G-Eval по каждой паре (долго, идёт по одной)</label>
+        <div class="actions">
+          <button class="btn btn-primary" id="batchRun" type="button">Оценить пакет</button>
+          <button class="btn btn-ghost" id="batchStop" type="button" hidden>Стоп</button>
+          <button class="btn btn-ghost" id="batchExport" type="button">Скачать JSON</button>
+        </div>
+        <p id="batchMsg" class="muted">Файл ещё не загружен.</p>
+        <div class="progress" id="batchProgress" hidden><i id="batchBar"></i></div>
+        <div class="table-wrap" style="margin-top:14px">
+          <table>
+            <thead><tr><th>#</th><th>Question</th><th>Answer</th><th>overall</th><th>C</th><th>судья</th></tr></thead>
+            <tbody id="batchTable"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-judge">
+      <article class="card">
+        <h2>LLM-as-a-Judge</h2>
+        <p class="lede">Провайдер G-Eval. Ключ пишется в <code>.env</code> и в ответах API не возвращается.</p>
+        <div class="providers" id="providers">
+          <button type="button" class="provider" data-provider="openrouter">
+            <b>OpenRouter</b>
+            <span>OpenAI-compatible gateway</span>
+          </button>
+          <button type="button" class="provider" data-provider="openai">
+            <b>OpenAI-compatible</b>
+            <span>официальный API или свой base URL</span>
+          </button>
+          <button type="button" class="provider" data-provider="ollama">
+            <b>Ollama</b>
+            <span>локальный inference, без ключа</span>
+          </button>
+        </div>
+
+        <div class="judge-fields" data-for="openrouter">
+          <label for="orKey">API-ключ OpenRouter</label>
+          <input id="orKey" type="password" autocomplete="new-password" spellcheck="false" autocapitalize="off" placeholder="API key" />
+          <p class="muted" id="orHint"></p>
+          <label for="orModel">Модель</label>
+          <input id="orModel" type="text" />
+          <div class="presets" id="orPresets"></div>
+          <label for="orBase">Base URL</label>
+          <input id="orBase" type="text" />
+        </div>
+
+        <div class="judge-fields" data-for="openai">
+          <label for="oaKey">API-ключ</label>
+          <input id="oaKey" type="password" autocomplete="new-password" spellcheck="false" autocapitalize="off" placeholder="API key" />
+          <p class="muted" id="oaHint"></p>
+          <label for="oaModel">Модель</label>
+          <input id="oaModel" type="text" />
+          <div class="presets" id="oaPresets"></div>
+          <label for="oaBase">Base URL</label>
+          <input id="oaBase" type="text" placeholder="https://api.openai.com/v1" />
+        </div>
+
+        <div class="judge-fields" data-for="ollama">
+          <label for="olBase">Ollama host</label>
+          <input id="olBase" type="text" placeholder="http://localhost:11434" />
+          <label for="olModel">Модель</label>
+          <input id="olModel" type="text" placeholder="llama3.2" />
+          <div class="presets" id="olPresets"></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="saveJudge" type="button">Сохранить</button>
+          <button class="btn btn-ghost" id="testJudge" type="button">Health-check</button>
+        </div>
+        <p id="judgeMsg" class="muted"></p>
+        <p class="secret-note">PUT /settings только с localhost. Секрет не логируется и не отдаётся в GET.</p>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-pair">
+      <article class="card">
+        <h2>Pairwise</h2>
+        <p class="lede">A vs B, затем swap порядка — оценка position bias.</p>
+        <label for="pq">Вопрос</label>
+        <textarea id="pq">Что такое столица Франции?</textarea>
+        <div class="split-2">
+          <div>
+            <label for="pa">Ответ A</label>
+            <textarea id="pa">Столица Франции — Париж.</textarea>
+          </div>
+          <div>
+            <label for="pb">Ответ B</label>
+            <textarea id="pb">Столица Франции — Лион.</textarea>
+          </div>
+        </div>
+        <label for="pr">Эталон</label>
+        <input id="pr" type="text" value="Париж" />
+        <div class="actions">
+          <button class="btn btn-primary" id="runPair" type="button">Сравнить</button>
+        </div>
+        <div id="pairOut" class="lede" style="margin-top:16px"></div>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-journal">
+      <article class="card">
+        <h2>Журнал сессии</h2>
+        <p class="lede">Локальная история pointwise-оценок (localStorage).</p>
+        <div class="chart-box tall"><canvas id="histChart"></canvas></div>
+        <div class="table-wrap" style="margin-top:14px">
+          <table>
+            <thead><tr><th>Время</th><th>Question</th><th>overall</th><th>Источник</th></tr></thead>
+            <tbody id="histTable"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-labels">
+      <div class="grid">
+        <article class="card">
+          <h2>Human score</h2>
+          <p class="lede">Офлайн-разметка в <code>human_labels.json</code>. В online-агрегатор не входит.</p>
+          <label>human_score</label>
+          <div class="range-row">
+            <input id="human" type="range" min="0" max="100" value="90" />
+            <b id="humanOut">90 / 100</b>
+          </div>
+          <p class="lede" style="margin-top:12px">Критерии отдельно, не только overall.</p>
+          <div class="hitl-dims" id="hitlDims"></div>
+          <label>case_type</label>
+          <input id="caseType" type="text" placeholder="verbose / partial / hallucination" />
+          <div class="actions">
+            <button class="btn btn-primary" id="save" type="button">Записать метку</button>
+          </div>
+          <p id="saveMsg" class="muted"></p>
+        </article>
+        <article class="card">
+          <h2>Корпус <span class="muted" id="total">0</span></h2>
+          <p class="lede">Строка загружает пару в pointwise.</p>
+          <div class="chart-box short"><canvas id="labelHist"></canvas></div>
+          <div class="table-wrap" style="margin-top:12px">
+            <table>
+              <thead><tr><th>id</th><th>Question</th><th>human</th></tr></thead>
+              <tbody id="labelTable"></tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-overview">
+      <article class="card">
+        <h2>Валидация</h2>
+          <p class="lede">Pearson / Spearman по корпусу, рекомендуемые веса, таблица ошибок. Режим <code>skip_judge</code> — быстрый; живые судьи — <code>scripts/run_validation.py --compare</code>.</p>
+        <div class="actions">
+          <button class="btn btn-primary" id="runOverview" type="button">Прогнать</button>
+        </div>
+        <p id="overviewMsg" class="muted"></p>
+        <div class="metrics" id="overviewCards"></div>
+        <div id="errorTables"></div>
+        <div class="charts">
+          <div class="chart-box"><canvas id="corrChart"></canvas></div>
+          <div class="chart-box"><canvas id="biasChart"></canvas></div>
+        </div>
+      </article>
+    </section>
+  </div>
+  <script src="/static/app.js?v=8"></script>
+</body>
+</html>

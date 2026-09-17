@@ -9,11 +9,12 @@ _TOKEN_RE = re.compile(r"[^\W\d_]+|\d+", re.UNICODE)
 
 def compute_lexical(answer: str, reference: str | None) -> LexicalMetrics:
     if not reference or not reference.strip():
-        return LexicalMetrics(rouge_l=None, bleu=None)
+        return LexicalMetrics(rouge_l=None, bleu=None, chrf=None)
 
     return LexicalMetrics(
         rouge_l=_rouge_l(answer, reference),
         bleu=_bleu(answer, reference),
+        chrf=_chrf(answer, reference),
     )
 
 
@@ -58,5 +59,15 @@ def _bleu(answer: str, reference: str) -> float:
         answer.strip(),
         [reference.strip()],
         tokenize="intl",
+    ).score
+    return max(0.0, min(1.0, score / 100.0))
+
+
+def _chrf(answer: str, reference: str) -> float:
+    import sacrebleu
+
+    score = sacrebleu.sentence_chrf(
+        answer.strip(),
+        [reference.strip()],
     ).score
     return max(0.0, min(1.0, score / 100.0))

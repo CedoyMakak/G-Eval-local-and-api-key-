@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import json
 import logging
-import math
 import re
 from typing import Literal
 
 from app.config import Settings
+from app.evaluators.common import gated_judge_score
 from app.evaluators.heuristics import compute_heuristics
 from app.providers.base import CompletionResult, JudgeProvider
-from app.schemas import Dimensions, JudgeResult, PairwiseJudgment, SemanticMetrics
+from app.schemas import Dimensions, JudgeMember, JudgeResult, PairwiseJudgment, SemanticMetrics
 
 logger = logging.getLogger(__name__)
 
@@ -33,13 +33,15 @@ POINTWISE_PROMPT = """Ты — независимый судья качеств�
 4 — хорошо
 5 — отлично
 
+Жёсткие правила:
+- Ложный факт, другая сущность или неверное число → correctness = 1. Беглость это не компенсирует.
+- Если correctness ≤ 2, completeness не выше 3.
+- Перефраз эталона — это хорошо: не снижай correctness только из-за других слов.
+
 Вопрос:
 {question}
 
-{context_block}{reference_block}Ответ кандидата:
-{answer}
-
-Формат ответа:
+{middle_blocks}Формат ответа:
 {{
   "rationale": "краткое обоснование на русском",
   "correctness": <1-5>,
@@ -82,6 +84,7 @@ async def judge_pointwise(
     context: str | None,
     semantic: SemanticMetrics,
     skip_judge: bool = False,
+    swap_blocks: bool = False,
 ) -> tuple[Dimensions, JudgeResult]:
     if skip_judge or provider is None:
         return _fallback_dimensions(answer, question, reference, semantic, context), JudgeResult(
@@ -92,20 +95,32 @@ async def judge_pointwise(
             fallback=True,
         )
 
-    prompt = _build_pointwise_prompt(question, answer, reference, context)
+    prompt = _build_pointwise_prompt(question, answer, reference, context, swap_blocks=swap_blocks)
     try:
         completion = await provider.complete(prompt, temperature=settings.judge_temperature)
         dimensions = _parse_pointwise(completion)
         rationale = _extract_rationale(completion.text)
-        if completion.logprobs:
+        used_logprobs = bool(completion.expected_units or completion.logprobs)
+        if completion.expected_units:
+            dimensions = _calibrate_with_expected(dimensions, completion.expected_units)
+        elif completion.logprobs:
             dimensions = _blend_with_logprobs(dimensions, completion.logprobs)
         return dimensions, JudgeResult(
             provider=completion.provider,
             model=completion.model,
             rationale=rationale,
             raw_scores=dimensions,
-            used_logprobs=bool(completion.logprobs),
+            used_logprobs=used_logprobs,
             fallback=False,
+            members=[
+                JudgeMember(
+                    provider=completion.provider,
+                    model=completion.model,
+                    fallback=False,
+                    rationale=rationale,
+                    score=round(gated_judge_score(dimensions), 4),
+                )
+            ],
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("LLM-судья недоступен, используется эвристический fallback: %s", exc)
@@ -117,6 +132,15 @@ async def judge_pointwise(
             raw_scores=dimensions,
             used_logprobs=False,
             fallback=True,
+            members=[
+                JudgeMember(
+                    provider=provider.name,
+                    model=provider.model,
+                    fallback=True,
+                    rationale=str(exc)[:240],
+                    score=round(gated_judge_score(dimensions), 4),
+                )
+            ],
         )
 
 
@@ -156,22 +180,47 @@ async def judge_pairwise(
         )
 
 
+def merge_dimensions(items: list[Dimensions], mode: str) -> Dimensions:
+    if not items:
+        raise ValueError("Нет оценок для объединения")
+    keys = ("correctness", "relevance", "completeness", "coherence")
+    values = {key: [getattr(item, key) for item in items] for key in keys}
+    grounded = [item.groundedness for item in items if item.groundedness is not None]
+    if mode == "min":
+        reduce_fn = min
+    else:
+        reduce_fn = lambda seq: sum(seq) / len(seq)  # noqa: E731
+    return Dimensions(
+        correctness=round(reduce_fn(values["correctness"]), 4),
+        relevance=round(reduce_fn(values["relevance"]), 4),
+        completeness=round(reduce_fn(values["completeness"]), 4),
+        coherence=round(reduce_fn(values["coherence"]), 4),
+        groundedness=round(reduce_fn(grounded), 4) if grounded else None,
+    )
+
+
 def _build_pointwise_prompt(
     question: str,
     answer: str,
     reference: str | None,
     context: str | None,
+    swap_blocks: bool = False,
 ) -> str:
     has_ref = bool(reference and reference.strip())
     has_ctx = bool(context and context.strip())
+    context_block = _optional_block("Контекст", context)
+    reference_block = _optional_block("Эталон (используй как ориентир, не наказывай за перефраз)", reference)
+    answer_block = _optional_block("Ответ кандидата", answer)
+    if swap_blocks:
+        middle = answer_block + context_block + reference_block
+    else:
+        middle = context_block + reference_block + answer_block
     return POINTWISE_PROMPT.format(
         question=question.strip(),
-        answer=answer.strip(),
         ref_hint=" и эталона" if has_ref else "",
         ground_hint="- groundedness: опирается ли ответ на приведённый контекст без выдумок" if has_ctx else "",
         ground_json=',\n  "groundedness": <1-5>' if has_ctx else "",
-        context_block=_optional_block("Контекст", context),
-        reference_block=_optional_block("Эталон (используй как ориентир, не наказывай за перефраз)", reference),
+        middle_blocks=middle,
     )
 
 
@@ -192,14 +241,27 @@ def _parse_pointwise(completion: CompletionResult) -> Dimensions:
     )
 
 
+def _calibrate_with_expected(dimensions: Dimensions, expected_units: list[float]) -> Dimensions:
+    fields = ["correctness", "relevance", "completeness", "coherence"]
+    if dimensions.groundedness is not None:
+        fields.append("groundedness")
+    updates = {}
+    for index, field in enumerate(fields):
+        if index >= len(expected_units):
+            break
+        parsed = getattr(dimensions, field)
+        expected = expected_units[index]
+        updates[field] = round(0.5 * parsed + 0.5 * expected, 4)
+    return dimensions.model_copy(update=updates)
+
+
 def _blend_with_logprobs(dimensions: Dimensions, logprobs: list[float]) -> Dimensions:
     if not logprobs:
         return dimensions
-    weights = [math.exp(lp) for lp in logprobs]
+    weights = [math_exp(lp) for lp in logprobs]
     mean_conf = sum(weights) / len(weights)
-    # чуть сжимаем оценки к среднему при низкой уверенности токенов
     shrink = max(0.0, min(1.0, mean_conf))
-    midpoint = 0.6
+    midpoint = 0.5
 
     def blend(value: float) -> float:
         return round(shrink * value + (1 - shrink) * midpoint, 4)
@@ -211,6 +273,12 @@ def _blend_with_logprobs(dimensions: Dimensions, logprobs: list[float]) -> Dimen
         coherence=blend(dimensions.coherence),
         groundedness=blend(dimensions.groundedness) if dimensions.groundedness is not None else None,
     )
+
+
+def math_exp(value: float) -> float:
+    import math
+
+    return math.exp(value)
 
 
 def _parse_winner(text: str) -> Literal["A", "B", "tie"]:
@@ -250,7 +318,6 @@ def _to_unit(value: object) -> float:
     if score > 5:
         score = 5.0
     if score < 1:
-        # допускаем уже нормализованный 0-1
         if 0.0 <= score <= 1.0:
             return round(score, 4)
         score = 1.0

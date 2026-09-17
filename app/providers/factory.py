@@ -6,8 +6,8 @@ from app.providers.ollama_provider import OllamaProvider
 from app.providers.openai_provider import OpenAIProvider
 
 
-def get_judge_provider(settings: Settings) -> JudgeProvider:
-    provider = settings.judge_provider.strip().lower()
+def get_judge_provider(settings: Settings, provider_name: str | None = None) -> JudgeProvider:
+    provider = (provider_name or settings.judge_provider).strip().lower()
     if provider == "openai":
         return OpenAIProvider(
             settings.openai_api_key,
@@ -27,4 +27,4 @@ def get_judge_provider(settings: Settings) -> JudgeProvider:
         )
     if provider == "ollama":
         return OllamaProvider(settings.ollama_base_url, settings.ollama_model)
-    raise ValueError(f"Неизвестный JUDGE_PROVIDER: {settings.judge_provider}")
+    raise ValueError(f"Неизвестный JUDGE_PROVIDER: {provider}")

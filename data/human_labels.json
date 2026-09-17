@@ -1,284 +1,843 @@
 [
   {
     "id": "q01-good",
+    "case_type": "good",
     "question": "Чему равна производная функции f(x) = x^2?",
     "answer": "Производная равна 2x.",
-    "reference": "f'(x) = 2x",
-    "human_score": 0.95
+    "reference": "Производная функции f(x) = x^2 равна 2x.",
+    "human_score": 0.95,
+    "human_dimensions": {
+      "correctness": 0.97,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q01-wrong",
+    "case_type": "wrong",
     "question": "Чему равна производная функции f(x) = x^2?",
     "answer": "Производная равна x^3.",
-    "reference": "f'(x) = 2x",
-    "human_score": 0.1
+    "reference": "Производная функции f(x) = x^2 равна 2x.",
+    "human_score": 0.1,
+    "human_dimensions": {
+      "correctness": 0.05,
+      "relevance": 0.8,
+      "completeness": 0.4,
+      "coherence": 0.85
+    }
   },
   {
     "id": "q02-good",
+    "case_type": "good",
     "question": "Что такое столица Франции?",
     "answer": "Столица Франции — Париж.",
-    "reference": "Париж",
-    "human_score": 1.0
+    "reference": "Столица Франции — Париж.",
+    "human_score": 1.0,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 1.0,
+      "completeness": 1.0,
+      "coherence": 1.0
+    }
   },
   {
     "id": "q02-verbose",
+    "case_type": "verbose",
     "question": "Что такое столица Франции?",
     "answer": "Франция — красивая европейская страна с богатой историей, кухней и искусством. Многие туристы ездят туда каждый год. Столица, разумеется, Париж, город света, где много музеев.",
-    "reference": "Париж",
-    "human_score": 0.75
+    "reference": "Столица Франции — Париж.",
+    "human_score": 0.75,
+    "human_dimensions": {
+      "correctness": 0.95,
+      "relevance": 0.7,
+      "completeness": 0.85,
+      "coherence": 0.7
+    },
+    "notes": "Факт верный, много воды."
   },
   {
     "id": "q02-wrong",
+    "case_type": "wrong",
     "question": "Что такое столица Франции?",
     "answer": "Столица Франции — Лион.",
-    "reference": "Париж",
-    "human_score": 0.05
+    "reference": "Столица Франции — Париж.",
+    "human_score": 0.05,
+    "human_dimensions": {
+      "correctness": 0.0,
+      "relevance": 0.85,
+      "completeness": 0.5,
+      "coherence": 0.9
+    }
   },
   {
     "id": "q03-good",
+    "case_type": "good",
     "question": "Объясни, что такое фотосинтез.",
     "answer": "Фотосинтез — процесс, в котором растения с помощью света превращают углекислый газ и воду в глюкозу и выделяют кислород.",
     "reference": "Фотосинтез — процесс образования органических веществ из углекислого газа и воды на свету с выделением кислорода.",
-    "human_score": 0.92
+    "human_score": 0.92,
+    "human_dimensions": {
+      "correctness": 0.95,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q03-partial",
+    "case_type": "partial",
     "question": "Объясни, что такое фотосинтез.",
     "answer": "Это когда растения дышат и растут на солнце.",
     "reference": "Фотосинтез — процесс образования органических веществ из углекислого газа и воды на свету с выделением кислорода.",
-    "human_score": 0.35
+    "human_score": 0.35,
+    "human_dimensions": {
+      "correctness": 0.25,
+      "relevance": 0.6,
+      "completeness": 0.25,
+      "coherence": 0.7
+    }
   },
   {
     "id": "q04-good",
+    "case_type": "short-answer",
     "question": "Сколько будет 17 * 19?",
     "answer": "323",
-    "reference": "323",
-    "human_score": 1.0
+    "reference": "Произведение 17 и 19 равно 323.",
+    "human_score": 1.0,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.8
+    }
   },
   {
     "id": "q04-wrong",
+    "case_type": "wrong",
     "question": "Сколько будет 17 * 19?",
     "answer": "330",
-    "reference": "323",
-    "human_score": 0.1
+    "reference": "Произведение 17 и 19 равно 323.",
+    "human_score": 0.1,
+    "human_dimensions": {
+      "correctness": 0.05,
+      "relevance": 1.0,
+      "completeness": 0.5,
+      "coherence": 0.8
+    }
   },
   {
     "id": "q05-good",
+    "case_type": "paraphrase",
     "question": "Назови три основных типа машинного обучения.",
     "answer": "Обучение с учителем, обучение без учителя и обучение с подкреплением.",
-    "reference": "Supervised learning, unsupervised learning и reinforcement learning.",
-    "human_score": 0.95
+    "reference": "Три основных типа машинного обучения: обучение с учителем (supervised), без учителя (unsupervised) и с подкреплением (reinforcement learning).",
+    "human_score": 0.95,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 1.0,
+      "completeness": 0.95,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q05-incomplete",
+    "case_type": "incomplete",
     "question": "Назови три основных типа машинного обучения.",
     "answer": "Обучение с учителем и без учителя.",
-    "reference": "Supervised learning, unsupervised learning и reinforcement learning.",
-    "human_score": 0.55
+    "reference": "Три основных типа машинного обучения: обучение с учителем (supervised), без учителя (unsupervised) и с подкреплением (reinforcement learning).",
+    "human_score": 0.55,
+    "human_dimensions": {
+      "correctness": 0.7,
+      "relevance": 1.0,
+      "completeness": 0.4,
+      "coherence": 0.9
+    }
   },
   {
     "id": "q06-good",
+    "case_type": "good",
     "question": "Что такое HTTP-статус 404?",
     "answer": "404 означает, что запрошенный ресурс не найден на сервере.",
-    "reference": "Код 404 Not Found: сервер не нашёл запрошенный ресурс.",
-    "human_score": 0.93
+    "reference": "HTTP-статус 404 Not Found означает, что сервер не нашёл запрошенный ресурс.",
+    "human_score": 0.93,
+    "human_dimensions": {
+      "correctness": 0.95,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q06-wrong",
+    "case_type": "wrong",
     "question": "Что такое HTTP-статус 404?",
     "answer": "404 — это ошибка авторизации, когда пароль неверный.",
-    "reference": "Код 404 Not Found: сервер не нашёл запрошенный ресурс.",
-    "human_score": 0.15
+    "reference": "HTTP-статус 404 Not Found означает, что сервер не нашёл запрошенный ресурс.",
+    "human_score": 0.15,
+    "human_dimensions": {
+      "correctness": 0.1,
+      "relevance": 0.7,
+      "completeness": 0.4,
+      "coherence": 0.85
+    }
   },
   {
     "id": "q07-good",
+    "case_type": "good",
     "question": "Чем отличается стек от очереди?",
     "answer": "Стек работает по принципу LIFO: последний пришёл — первый ушёл. Очередь работает по FIFO: первый пришёл — первый ушёл.",
-    "reference": "Стек — LIFO, очередь — FIFO.",
-    "human_score": 0.96
+    "reference": "Стек работает по принципу LIFO, очередь — по принципу FIFO.",
+    "human_score": 0.96,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 1.0,
+      "completeness": 1.0,
+      "coherence": 1.0
+    }
   },
   {
     "id": "q07-confused",
+    "case_type": "wrong",
     "question": "Чем отличается стек от очереди?",
     "answer": "И стек, и очередь удаляют элементы с начала, просто в стеке элементы ещё и сортируются.",
-    "reference": "Стек — LIFO, очередь — FIFO.",
-    "human_score": 0.2
+    "reference": "Стек работает по принципу LIFO, очередь — по принципу FIFO.",
+    "human_score": 0.2,
+    "human_dimensions": {
+      "correctness": 0.1,
+      "relevance": 0.7,
+      "completeness": 0.3,
+      "coherence": 0.7
+    }
   },
   {
     "id": "q08-good",
+    "case_type": "good",
     "question": "Что такое нормальное распределение?",
     "answer": "Это непрерывное распределение вероятностей с колоколообразной плотностью, симметричное относительно среднего. Его задают среднее и дисперсия.",
-    "reference": "Нормальное распределение — симметричное колоколообразное распределение, полностью определяемое средним и дисперсией.",
-    "human_score": 0.9
+    "reference": "Нормальное распределение — симметричное колоколообразное распределение вероятностей, полностью определяемое средним и дисперсией.",
+    "human_score": 0.9,
+    "human_dimensions": {
+      "correctness": 0.92,
+      "relevance": 1.0,
+      "completeness": 0.88,
+      "coherence": 0.92
+    }
   },
   {
     "id": "q08-short",
+    "case_type": "partial",
     "question": "Что такое нормальное распределение?",
     "answer": "Это когда данные выглядят нормально.",
-    "reference": "Нормальное распределение — симметричное колоколообразное распределение, полностью определяемое средним и дисперсией.",
-    "human_score": 0.2
+    "reference": "Нормальное распределение — симметричное колоколообразное распределение вероятностей, полностью определяемое средним и дисперсией.",
+    "human_score": 0.2,
+    "human_dimensions": {
+      "correctness": 0.15,
+      "relevance": 0.5,
+      "completeness": 0.15,
+      "coherence": 0.6
+    }
   },
   {
     "id": "q09-good",
+    "case_type": "good",
     "question": "Кто написал роман «Война и мир»?",
     "answer": "Лев Толстой.",
-    "reference": "Лев Николаевич Толстой",
-    "human_score": 1.0
+    "reference": "Роман «Война и мир» написал Лев Николаевич Толстой.",
+    "human_score": 1.0,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q09-wrong",
+    "case_type": "wrong",
     "question": "Кто написал роман «Война и мир»?",
     "answer": "Фёдор Достоевский.",
-    "reference": "Лев Николаевич Толстой",
-    "human_score": 0.0
+    "reference": "Роман «Война и мир» написал Лев Николаевич Толстой.",
+    "human_score": 0.0,
+    "human_dimensions": {
+      "correctness": 0.0,
+      "relevance": 0.9,
+      "completeness": 0.5,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q10-good",
+    "case_type": "good",
     "question": "Что делает оператор JOIN в SQL?",
     "answer": "JOIN объединяет строки из двух или более таблиц по связанному столбцу.",
-    "reference": "JOIN соединяет таблицы по ключу или условию связи.",
-    "human_score": 0.9
+    "reference": "Оператор JOIN соединяет строки таблиц по ключу или другому условию связи.",
+    "human_score": 0.9,
+    "human_dimensions": {
+      "correctness": 0.92,
+      "relevance": 1.0,
+      "completeness": 0.85,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q10-partial",
+    "case_type": "partial",
     "question": "Что делает оператор JOIN в SQL?",
     "answer": "Он как-то склеивает таблицы.",
-    "reference": "JOIN соединяет таблицы по ключу или условию связи.",
-    "human_score": 0.4
+    "reference": "Оператор JOIN соединяет строки таблиц по ключу или другому условию связи.",
+    "human_score": 0.4,
+    "human_dimensions": {
+      "correctness": 0.45,
+      "relevance": 0.8,
+      "completeness": 0.25,
+      "coherence": 0.7
+    }
   },
   {
     "id": "q11-good",
+    "case_type": "good",
     "question": "Почему небо голубое?",
     "answer": "Коротковолновый синий свет сильнее рассеивается молекулами воздуха (рэлеевское рассеяние), поэтому днём небо выглядит голубым.",
-    "reference": "Небо голубое из-за рэлеевского рассеяния солнечного света в атмосфере.",
-    "human_score": 0.94
+    "reference": "Небо выглядит голубым из-за рэлеевского рассеяния солнечного света в атмосфере.",
+    "human_score": 0.94,
+    "human_dimensions": {
+      "correctness": 0.96,
+      "relevance": 1.0,
+      "completeness": 0.92,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q11-wrong",
+    "case_type": "wrong",
     "question": "Почему небо голубое?",
     "answer": "Потому что океан отражает свой цвет в небо.",
-    "reference": "Небо голубое из-за рэлеевского рассеяния солнечного света в атмосфере.",
-    "human_score": 0.15
+    "reference": "Небо выглядит голубым из-за рэлеевского рассеяния солнечного света в атмосфере.",
+    "human_score": 0.15,
+    "human_dimensions": {
+      "correctness": 0.1,
+      "relevance": 0.8,
+      "completeness": 0.4,
+      "coherence": 0.85
+    }
   },
   {
     "id": "q12-good",
+    "case_type": "paraphrase",
     "question": "Что такое overfitting в машинном обучении?",
     "answer": "Переобучение — ситуация, когда модель слишком хорошо запоминает обучающую выборку и плохо обобщается на новые данные.",
-    "reference": "Overfitting: модель подстраивается под обучающие данные и теряет обобщающую способность.",
-    "human_score": 0.93
+    "reference": "Переобучение (overfitting) — модель подстраивается под обучающие данные и теряет обобщающую способность.",
+    "human_score": 0.93,
+    "human_dimensions": {
+      "correctness": 0.95,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q12-verbose",
+    "case_type": "verbose",
     "question": "Что такое overfitting в машинном обучении?",
     "answer": "Overfitting — очень важная и часто обсуждаемая проблема. Модели бывают разные, данных тоже много, и иногда всё идёт не так. Короче, модель слишком сильно учится на том, что уже видела, и потом на тесте работает хуже. Ещё бывают регуляризация, dropout, ранняя остановка и куча других слов.",
-    "reference": "Overfitting: модель подстраивается под обучающие данные и теряет обобщающую способность.",
-    "human_score": 0.7
+    "reference": "Переобучение (overfitting) — модель подстраивается под обучающие данные и теряет обобщающую способность.",
+    "human_score": 0.7,
+    "human_dimensions": {
+      "correctness": 0.8,
+      "relevance": 0.75,
+      "completeness": 0.7,
+      "coherence": 0.55
+    }
   },
   {
     "id": "q13-good",
+    "case_type": "paraphrase",
     "question": "Переведи на английский: «Кошка сидит на ковре».",
     "answer": "The cat is sitting on the carpet.",
     "reference": "The cat is sitting on the rug.",
-    "human_score": 0.88
+    "human_score": 0.88,
+    "human_dimensions": {
+      "correctness": 0.9,
+      "relevance": 1.0,
+      "completeness": 1.0,
+      "coherence": 1.0
+    },
+    "notes": "carpet ≈ rug"
   },
   {
     "id": "q13-wrong",
+    "case_type": "wrong",
     "question": "Переведи на английский: «Кошка сидит на ковре».",
     "answer": "The dog runs in the park.",
     "reference": "The cat is sitting on the rug.",
-    "human_score": 0.05
+    "human_score": 0.05,
+    "human_dimensions": {
+      "correctness": 0.0,
+      "relevance": 0.2,
+      "completeness": 0.2,
+      "coherence": 0.9
+    }
   },
   {
     "id": "q14-good",
+    "case_type": "good",
     "question": "Что такое REST API?",
     "answer": "REST API — архитектурный стиль веб-сервисов, где ресурсы адресуются URL, а операции выполняются методами HTTP: GET, POST, PUT, DELETE.",
-    "reference": "REST — стиль взаимодействия через HTTP-методы и ресурсы, идентифицируемые URI.",
-    "human_score": 0.91
+    "reference": "REST — архитектурный стиль взаимодействия через HTTP-методы и ресурсы, идентифицируемые URI.",
+    "human_score": 0.91,
+    "human_dimensions": {
+      "correctness": 0.93,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q14-emptyish",
+    "case_type": "partial",
     "question": "Что такое REST API?",
     "answer": "Это апи.",
-    "reference": "REST — стиль взаимодействия через HTTP-методы и ресурсы, идентифицируемые URI.",
-    "human_score": 0.15
+    "reference": "REST — архитектурный стиль взаимодействия через HTTP-методы и ресурсы, идентифицируемые URI.",
+    "human_score": 0.15,
+    "human_dimensions": {
+      "correctness": 0.15,
+      "relevance": 0.4,
+      "completeness": 0.1,
+      "coherence": 0.4
+    }
   },
   {
     "id": "q15-grounded",
+    "case_type": "grounded",
     "question": "Какой срок хранения документа указан в тексте?",
     "answer": "Согласно фрагменту, документ хранится 5 лет.",
-    "reference": "5 лет",
+    "reference": "Согласно тексту, первичные документы хранятся 5 лет.",
     "context": "Внутренний регламент: первичные бухгалтерские документы хранятся 5 лет с 1 января года, следующего за отчётным.",
-    "human_score": 0.97
+    "human_score": 0.97,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 1.0,
+      "completeness": 0.85,
+      "coherence": 0.95,
+      "groundedness": 1.0
+    }
   },
   {
     "id": "q15-hallucination",
+    "case_type": "hallucination",
     "question": "Какой срок хранения документа указан в тексте?",
     "answer": "Документ нужно хранить бессрочно, это стандарт налоговой.",
-    "reference": "5 лет",
+    "reference": "Согласно тексту, первичные документы хранятся 5 лет.",
     "context": "Внутренний регламент: первичные бухгалтерские документы хранятся 5 лет с 1 января года, следующего за отчётным.",
-    "human_score": 0.1
+    "human_score": 0.1,
+    "human_dimensions": {
+      "correctness": 0.05,
+      "relevance": 0.7,
+      "completeness": 0.4,
+      "coherence": 0.85,
+      "groundedness": 0.0
+    }
   },
   {
     "id": "q16-good",
+    "case_type": "short-answer",
     "question": "Чему равно число π с точностью до двух знаков?",
     "answer": "3.14",
-    "reference": "3.14",
-    "human_score": 1.0
+    "reference": "Число π с точностью до двух знаков после запятой равно 3.14.",
+    "human_score": 1.0,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 1.0,
+      "completeness": 1.0,
+      "coherence": 0.8
+    }
   },
   {
     "id": "q16-approx",
+    "case_type": "partial",
     "question": "Чему равно число π с точностью до двух знаков?",
     "answer": "Примерно 3.1",
-    "reference": "3.14",
-    "human_score": 0.45
+    "reference": "Число π с точностью до двух знаков после запятой равно 3.14.",
+    "human_score": 0.45,
+    "human_dimensions": {
+      "correctness": 0.5,
+      "relevance": 1.0,
+      "completeness": 0.4,
+      "coherence": 0.8
+    }
   },
   {
     "id": "q17-good",
+    "case_type": "good",
     "question": "Что такое хеш-таблица?",
     "answer": "Хеш-таблица хранит пары ключ-значение и использует хеш-функцию, чтобы за O(1) в среднем находить элемент по ключу.",
     "reference": "Хеш-таблица — структура данных для хранения пар ключ-значение с доступом в среднем за константное время.",
-    "human_score": 0.92
+    "human_score": 0.92,
+    "human_dimensions": {
+      "correctness": 0.94,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q17-wrong",
+    "case_type": "wrong",
     "question": "Что такое хеш-таблица?",
     "answer": "Это таблица в Excel, где считают хешбраун.",
     "reference": "Хеш-таблица — структура данных для хранения пар ключ-значение с доступом в среднем за константное время.",
-    "human_score": 0.0
+    "human_score": 0.0,
+    "human_dimensions": {
+      "correctness": 0.0,
+      "relevance": 0.1,
+      "completeness": 0.1,
+      "coherence": 0.6
+    }
   },
   {
     "id": "q18-good",
+    "case_type": "good",
     "question": "Как получить список уникальных элементов в Python?",
     "answer": "Можно обернуть последовательность в set: unique = list(set(items)). Если важен порядок, используют dict.fromkeys(items).",
-    "reference": "Использовать set или dict.fromkeys для сохранения порядка.",
-    "human_score": 0.9
+    "reference": "В Python уникальные элементы получают через set или через dict.fromkeys, если нужно сохранить порядок.",
+    "human_score": 0.9,
+    "human_dimensions": {
+      "correctness": 0.95,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.9
+    }
   },
   {
     "id": "q18-wrong",
+    "case_type": "wrong",
     "question": "Как получить список уникальных элементов в Python?",
     "answer": "Нужно вызвать items.unique(), как в pandas, это есть у любого списка.",
-    "reference": "Использовать set или dict.fromkeys для сохранения порядка.",
-    "human_score": 0.2
+    "reference": "В Python уникальные элементы получают через set или через dict.fromkeys, если нужно сохранить порядок.",
+    "human_score": 0.2,
+    "human_dimensions": {
+      "correctness": 0.1,
+      "relevance": 0.8,
+      "completeness": 0.3,
+      "coherence": 0.8
+    }
   },
   {
     "id": "q19-good",
+    "case_type": "good",
     "question": "Что произойдёт с водой при 100 °C на уровне моря?",
     "answer": "Вода закипит и начнёт интенсивно переходить в пар.",
-    "reference": "При нормальном давлении вода кипит при 100 °C.",
-    "human_score": 0.93
+    "reference": "При нормальном атмосферном давлении вода закипает при 100 °C.",
+    "human_score": 0.93,
+    "human_dimensions": {
+      "correctness": 0.95,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.95
+    }
   },
   {
     "id": "q19-wrong",
+    "case_type": "wrong",
     "question": "Что произойдёт с водой при 100 °C на уровне моря?",
     "answer": "Вода замёрзнет.",
-    "reference": "При нормальном давлении вода кипит при 100 °C.",
-    "human_score": 0.0
+    "reference": "При нормальном атмосферном давлении вода закипает при 100 °C.",
+    "human_score": 0.0,
+    "human_dimensions": {
+      "correctness": 0.0,
+      "relevance": 0.7,
+      "completeness": 0.3,
+      "coherence": 0.9
+    }
   },
   {
     "id": "q20-good",
+    "case_type": "good",
     "question": "Зачем нужен git commit?",
     "answer": "commit фиксирует снимок изменений в репозитории вместе с сообщением, чтобы можно было вернуться к этой версии.",
-    "reference": "git commit сохраняет набор изменений как новую ревизию в истории.",
-    "human_score": 0.9
+    "reference": "Команда git commit сохраняет набор изменений как новую ревизию в истории репозитория.",
+    "human_score": 0.9,
+    "human_dimensions": {
+      "correctness": 0.92,
+      "relevance": 1.0,
+      "completeness": 0.88,
+      "coherence": 0.92
+    }
+  },
+  {
+    "id": "q21-paraphrase",
+    "case_type": "paraphrase",
+    "question": "Что такое столица Франции?",
+    "answer": "Главный город этой страны — Париж.",
+    "reference": "Столица Франции — Париж.",
+    "human_score": 0.92,
+    "human_dimensions": {
+      "correctness": 0.95,
+      "relevance": 0.9,
+      "completeness": 0.85,
+      "coherence": 0.9
+    },
+    "notes": "Перефраз без лексического копирования эталона."
+  },
+  {
+    "id": "q21-lexical-trap",
+    "case_type": "lexical-trap",
+    "question": "Что такое столица Франции?",
+    "answer": "Франция, столица культуры и искусства, славится Лионом как главным городом страны.",
+    "reference": "Столица Франции — Париж.",
+    "human_score": 0.15,
+    "human_dimensions": {
+      "correctness": 0.1,
+      "relevance": 0.7,
+      "completeness": 0.4,
+      "coherence": 0.8
+    },
+    "notes": "Много общих слов, факт неверный."
+  },
+  {
+    "id": "q22-verbose-correct",
+    "case_type": "verbose",
+    "question": "Чему равна производная функции f(x) = x^2?",
+    "answer": "Если вспомнить таблицу производных и правило степени, то для x в квадрате коэффициент 2 выносится вперёд, а степень уменьшается на единицу. Поэтому производная равна 2x. Это верно для всех x из области определения.",
+    "reference": "Производная функции f(x) = x^2 равна 2x.",
+    "human_score": 0.82,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 0.85,
+      "completeness": 0.9,
+      "coherence": 0.7
+    }
+  },
+  {
+    "id": "q22-verbose-wrong",
+    "case_type": "verbose",
+    "question": "Чему равна производная функции f(x) = x^2?",
+    "answer": "Производные — важная тема матанализа, их применяют в физике и экономике. Для квадратичной функции ответ обычно 2x, но здесь, учитывая высшие порядки, производная скорее x^3, потому что степень растёт.",
+    "reference": "Производная функции f(x) = x^2 равна 2x.",
+    "human_score": 0.2,
+    "human_dimensions": {
+      "correctness": 0.15,
+      "relevance": 0.6,
+      "completeness": 0.4,
+      "coherence": 0.6
+    }
+  },
+  {
+    "id": "q23-partial-two-facts",
+    "case_type": "partial",
+    "question": "Назови три основных типа машинного обучения и кратко что они делают.",
+    "answer": "Есть обучение с учителем: модель учится на размеченных примерах. И ещё обучение с подкреплением, где есть награда.",
+    "reference": "Три типа: обучение с учителем на размеченных данных, без учителя на неразмеченных, с подкреплением через награду.",
+    "human_score": 0.58,
+    "human_dimensions": {
+      "correctness": 0.7,
+      "relevance": 1.0,
+      "completeness": 0.45,
+      "coherence": 0.85
+    }
+  },
+  {
+    "id": "q24-fake-citation",
+    "case_type": "hallucination",
+    "question": "Что такое HTTP-статус 404?",
+    "answer": "По RFC 9999 статус 404 означает ошибку шлюза, это подтверждает документация Nginx 2011 года.",
+    "reference": "HTTP-статус 404 Not Found означает, что сервер не нашёл запрошенный ресурс.",
+    "human_score": 0.1,
+    "human_dimensions": {
+      "correctness": 0.05,
+      "relevance": 0.6,
+      "completeness": 0.3,
+      "coherence": 0.8
+    }
+  },
+  {
+    "id": "q25-one-word",
+    "case_type": "short-answer",
+    "question": "Что такое столица Франции?",
+    "answer": "Париж",
+    "reference": "Столица Франции — Париж.",
+    "human_score": 0.9,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 1.0,
+      "completeness": 0.7,
+      "coherence": 0.7
+    }
+  },
+  {
+    "id": "q26-english-ok",
+    "case_type": "paraphrase",
+    "question": "Назови три основных типа машинного обучения.",
+    "answer": "Supervised learning, unsupervised learning, and reinforcement learning.",
+    "reference": "Три основных типа машинного обучения: обучение с учителем (supervised), без учителя (unsupervised) и с подкреплением (reinforcement learning).",
+    "human_score": 0.9,
+    "human_dimensions": {
+      "correctness": 1.0,
+      "relevance": 1.0,
+      "completeness": 0.9,
+      "coherence": 0.9
+    }
+  },
+  {
+    "id": "q27-fluent-offtopic",
+    "case_type": "off-topic",
+    "question": "Что делает оператор JOIN в SQL?",
+    "answer": "SQL — мощный язык, его стоит учить каждому разработчику. Реляционные базы данных хранят информацию в таблицах и обеспечивают целостность.",
+    "reference": "Оператор JOIN соединяет строки таблиц по ключу или другому условию связи.",
+    "human_score": 0.15,
+    "human_dimensions": {
+      "correctness": 0.1,
+      "relevance": 0.15,
+      "completeness": 0.1,
+      "coherence": 0.9
+    }
+  },
+  {
+    "id": "q28-context-extra",
+    "case_type": "hallucination",
+    "question": "Какой срок хранения документа указан в тексте?",
+    "answer": "Документ хранится 5 лет, после чего его обязательно передают в государственный архив на 25 лет.",
+    "reference": "Согласно тексту, первичные документы хранятся 5 лет.",
+    "context": "Внутренний регламент: первичные бухгалтерские документы хранятся 5 лет с 1 января года, следующего за отчётным.",
+    "human_score": 0.45,
+    "human_dimensions": {
+      "correctness": 0.55,
+      "relevance": 0.9,
+      "completeness": 0.6,
+      "coherence": 0.85,
+      "groundedness": 0.35
+    },
+    "notes": "Срок из контекста верен, добавлена выдумка."
+  },
+  {
+    "id": "q29-near-miss",
+    "case_type": "near-miss",
+    "question": "Сколько будет 17 * 19?",
+    "answer": "322",
+    "reference": "Произведение 17 и 19 равно 323.",
+    "human_score": 0.2,
+    "human_dimensions": {
+      "correctness": 0.15,
+      "relevance": 1.0,
+      "completeness": 0.5,
+      "coherence": 0.8
+    }
+  },
+  {
+    "id": "q30-hedged",
+    "case_type": "partial",
+    "question": "Что такое столица Франции?",
+    "answer": "Кажется, это Париж, хотя я не уверен.",
+    "reference": "Столица Франции — Париж.",
+    "human_score": 0.8,
+    "human_dimensions": {
+      "correctness": 0.9,
+      "relevance": 1.0,
+      "completeness": 0.7,
+      "coherence": 0.7
+    }
+  },
+  {
+    "id": "q31-contradiction",
+    "case_type": "contradiction",
+    "question": "Что такое столица Франции?",
+    "answer": "Столица Франции — Париж. Впрочем, столица всё-таки Лион.",
+    "reference": "Столица Франции — Париж.",
+    "human_score": 0.25,
+    "human_dimensions": {
+      "correctness": 0.2,
+      "relevance": 0.9,
+      "completeness": 0.4,
+      "coherence": 0.4
+    }
+  },
+  {
+    "id": "q32-copy-question",
+    "case_type": "off-topic",
+    "question": "Что такое REST API?",
+    "answer": "Что такое REST API?",
+    "reference": "REST — архитектурный стиль взаимодействия через HTTP-методы и ресурсы, идентифицируемые URI.",
+    "human_score": 0.05,
+    "human_dimensions": {
+      "correctness": 0.0,
+      "relevance": 0.1,
+      "completeness": 0.0,
+      "coherence": 0.4
+    }
+  },
+  {
+    "id": "q33-context-ignore",
+    "case_type": "hallucination",
+    "question": "Какой срок хранения документа указан в тексте?",
+    "answer": "Бухгалтерские документы обычно хранят 4 года, как требует налоговый кодекс.",
+    "reference": "Согласно тексту, первичные документы хранятся 5 лет.",
+    "context": "Внутренний регламент: первичные бухгалтерские документы хранятся 5 лет с 1 января года, следующего за отчётным.",
+    "human_score": 0.15,
+    "human_dimensions": {
+      "correctness": 0.1,
+      "relevance": 0.8,
+      "completeness": 0.4,
+      "coherence": 0.85,
+      "groundedness": 0.1
+    }
+  },
+  {
+    "id": "q34-synonym-stack",
+    "case_type": "paraphrase",
+    "question": "Чем отличается стек от очереди?",
+    "answer": "Стек — это магазин: положил сверху, снял сверху. Очередь обслуживает того, кто пришёл раньше всех.",
+    "reference": "Стек работает по принципу LIFO, очередь — по принципу FIFO.",
+    "human_score": 0.9,
+    "human_dimensions": {
+      "correctness": 0.92,
+      "relevance": 1.0,
+      "completeness": 0.85,
+      "coherence": 0.9
+    }
+  },
+  {
+    "id": "q35-water-evaporate",
+    "case_type": "partial",
+    "question": "Что произойдёт с водой при 100 °C на уровне моря?",
+    "answer": "Вода начнёт испаряться.",
+    "reference": "При нормальном атмосферном давлении вода закипает при 100 °C.",
+    "human_score": 0.55,
+    "human_dimensions": {
+      "correctness": 0.55,
+      "relevance": 0.85,
+      "completeness": 0.45,
+      "coherence": 0.8
+    },
+    "notes": "Испарение идёт и ниже 100, при 100 — кипение."
+  },
+  {
+    "id": "q36-git-push",
+    "case_type": "off-topic",
+    "question": "Зачем нужен git commit?",
+    "answer": "Чтобы отправить изменения на GitHub командой git push origin main.",
+    "reference": "Команда git commit сохраняет набор изменений как новую ревизию в истории репозитория.",
+    "human_score": 0.25,
+    "human_dimensions": {
+      "correctness": 0.2,
+      "relevance": 0.4,
+      "completeness": 0.2,
+      "coherence": 0.85
+    }
+  },
+  {
+    "id": "q37-unverifiable-time",
+    "case_type": "unverifiable",
+    "question": "Сколько сейчас точное время в Франкфурте?",
+    "answer": "Сейчас в Франкфурте 14:40.",
+    "reference": "Без источника часов назвать точное текущее время нельзя; фиксированная отметка времени без контекста непроверяема.",
+    "human_score": 0.2,
+    "human_dimensions": {
+      "correctness": 0.1,
+      "relevance": 0.8,
+      "completeness": 0.3,
+      "coherence": 0.8
+    },
+    "notes": "Бывшая UI-метка со score=1.0 заменена на спорный непроверяемый ответ."
   }
 ]

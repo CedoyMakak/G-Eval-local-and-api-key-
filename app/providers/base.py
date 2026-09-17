@@ -10,6 +10,7 @@ class CompletionResult:
     provider: str
     model: str
     logprobs: list[float] | None = None
+    expected_units: list[float] | None = None
 
 
 class JudgeProvider(Protocol):

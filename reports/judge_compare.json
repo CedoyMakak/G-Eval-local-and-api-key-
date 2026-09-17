@@ -1,0 +1,229 @@
+{
+  "n": 59,
+  "ids": [
+    "q01-good",
+    "q01-wrong",
+    "q02-good",
+    "q02-verbose",
+    "q02-wrong",
+    "q03-good",
+    "q03-partial",
+    "q04-good",
+    "q04-wrong",
+    "q05-good",
+    "q05-incomplete",
+    "q06-good",
+    "q06-wrong",
+    "q07-good",
+    "q07-confused",
+    "q08-good",
+    "q08-short",
+    "q09-good",
+    "q09-wrong",
+    "q10-good",
+    "q10-partial",
+    "q11-good",
+    "q11-wrong",
+    "q12-good",
+    "q12-verbose",
+    "q13-good",
+    "q13-wrong",
+    "q14-good",
+    "q14-emptyish",
+    "q15-grounded",
+    "q15-hallucination",
+    "q16-good",
+    "q16-approx",
+    "q17-good",
+    "q17-wrong",
+    "q18-good",
+    "q18-wrong",
+    "q19-good",
+    "q19-wrong",
+    "q20-good",
+    "q21-paraphrase",
+    "q21-lexical-trap",
+    "q22-verbose-correct",
+    "q22-verbose-wrong",
+    "q23-partial-two-facts",
+    "q24-fake-citation",
+    "q25-one-word",
+    "q26-english-ok",
+    "q27-fluent-offtopic",
+    "q28-context-extra",
+    "q29-near-miss",
+    "q30-hedged",
+    "q31-contradiction",
+    "q32-copy-question",
+    "q33-context-ignore",
+    "q34-synonym-stack",
+    "q35-water-evaporate",
+    "q36-git-push",
+    "q37-unverifiable-time"
+  ],
+  "heuristics": {
+    "fallback_rate": 1.0,
+    "overall": {
+      "n": 59,
+      "pearson": 0.4941,
+      "spearman": 0.4589,
+      "kendall": 0.3279
+    },
+    "judge": {
+      "n": 59,
+      "pearson": 0.4896,
+      "spearman": 0.4606,
+      "kendall": 0.3315
+    },
+    "semantic": {
+      "n": 59,
+      "pearson": 0.4891,
+      "spearman": 0.4871,
+      "kendall": 0.3483
+    },
+    "lexical": {
+      "n": 59,
+      "pearson": 0.406,
+      "spearman": 0.5396,
+      "kendall": 0.3986
+    },
+    "chrf": {
+      "n": 59,
+      "pearson": 0.4047,
+      "spearman": 0.43,
+      "kendall": 0.3208
+    }
+  },
+  "gemma": {
+    "fallback_rate": 0.0,
+    "overall": {
+      "n": 59,
+      "pearson": 0.9771,
+      "spearman": 0.9127,
+      "kendall": 0.7959
+    },
+    "judge": {
+      "n": 59,
+      "pearson": 0.9778,
+      "spearman": 0.926,
+      "kendall": 0.8204
+    },
+    "semantic": {
+      "n": 59,
+      "pearson": 0.4891,
+      "spearman": 0.4871,
+      "kendall": 0.3483
+    },
+    "lexical": {
+      "n": 59,
+      "pearson": 0.406,
+      "spearman": 0.5396,
+      "kendall": 0.3986
+    },
+    "chrf": {
+      "n": 59,
+      "pearson": 0.4047,
+      "spearman": 0.43,
+      "kendall": 0.3208
+    }
+  },
+  "ollama": {
+    "fallback_rate": 0.0,
+    "overall": {
+      "n": 59,
+      "pearson": 0.6979,
+      "spearman": 0.6592,
+      "kendall": 0.4943
+    },
+    "judge": {
+      "n": 59,
+      "pearson": 0.6983,
+      "spearman": 0.6596,
+      "kendall": 0.4965
+    },
+    "semantic": {
+      "n": 59,
+      "pearson": 0.4891,
+      "spearman": 0.4871,
+      "kendall": 0.3483
+    },
+    "lexical": {
+      "n": 59,
+      "pearson": 0.406,
+      "spearman": 0.5396,
+      "kendall": 0.3986
+    },
+    "chrf": {
+      "n": 59,
+      "pearson": 0.4047,
+      "spearman": 0.43,
+      "kendall": 0.3208
+    }
+  },
+  "ensemble_mean": {
+    "fallback_rate": 0.0,
+    "overall": {
+      "n": 59,
+      "pearson": 0.9295,
+      "spearman": 0.8677,
+      "kendall": 0.687
+    },
+    "judge": {
+      "n": 59,
+      "pearson": 0.9304,
+      "spearman": 0.8694,
+      "kendall": 0.6927
+    },
+    "semantic": {
+      "n": 59,
+      "pearson": 0.4891,
+      "spearman": 0.4871,
+      "kendall": 0.3483
+    },
+    "lexical": {
+      "n": 59,
+      "pearson": 0.406,
+      "spearman": 0.5396,
+      "kendall": 0.3986
+    },
+    "chrf": {
+      "n": 59,
+      "pearson": 0.4047,
+      "spearman": 0.43,
+      "kendall": 0.3208
+    }
+  },
+  "ensemble_min": {
+    "fallback_rate": 0.0,
+    "overall": {
+      "n": 59,
+      "pearson": 0.8314,
+      "spearman": 0.8727,
+      "kendall": 0.7195
+    },
+    "judge": {
+      "n": 59,
+      "pearson": 0.8323,
+      "spearman": 0.8748,
+      "kendall": 0.7228
+    },
+    "semantic": {
+      "n": 59,
+      "pearson": 0.4891,
+      "spearman": 0.4871,
+      "kendall": 0.3483
+    },
+    "lexical": {
+      "n": 59,
+      "pearson": 0.406,
+      "spearman": 0.5396,
+      "kendall": 0.3986
+    },
+    "chrf": {
+      "n": 59,
+      "pearson": 0.4047,
+      "spearman": 0.43,
+      "kendall": 0.3208
+    }
+  }
+}

@@ -11,6 +11,10 @@ __pycache__/
 .vscode/
 !reports/.gitkeep
 !reports/validation.md
+!reports/judge_compare.md
+!reports/judge_compare.json
+models/
+reports/judge_cache/
 *.log
 .DS_Store
 Thumbs.db

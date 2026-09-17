@@ -2,90 +2,99 @@
 
 Учебный сервис для практики: оценивает ответ языковой модели по вопросу и возвращает структурированный отчёт о качестве.
 
-Онлайн-контур считает дешёвые метрики и вызывает LLM-as-a-Judge. Ручные метки не участвуют в каждом запросе: они нужны только для офлайн-валидации (корреляция и искажения).
+Онлайн-контур считает дешёвые метрики и вызывает LLM-as-a-Judge. Ручные метки не участвуют в каждом запросе: они нужны только для офлайн-валидации (корреляция, веса агрегатора, разбор ошибок).
 
 ## Архитектура
 
 ```
 Вход: question + answer + optional reference + optional context
         │
-        ├── лексика: ROUGE-L, BLEU          (нужен эталон)
-        ├── семантика: cosine эмбеддингов   (нужен эталон)
-        └── LLM-as-a-Judge: G-Eval          (OpenRouter / OpenAI / Ollama)
+        ├── лексика: ROUGE-L, BLEU, chrF     (нужен эталон)
+        ├── семантика: cosine MiniLM         (нужен эталон)
+        ├── фактчек: overlap с context
+        └── LLM-as-a-Judge: G-Eval           (один судья или ensemble)
                     │
                     ▼
               агрегатор → Quality Report
                     │
                     ▼
-     офлайн: 40 ручных меток → корреляция + bias
+     офлайн HITL (~60 меток, критерии отдельно) → Spearman / ошибки / веса
 ```
 
 Ограничения, которые система учитывает явно:
 
-- без `reference` ROUGE/BLEU/cosine не считаются;
+- без `reference` ROUGE/BLEU/chrF/cosine не считаются;
 - ROUGE-L считается по Unicode-токенам: стандартный `rouge-score` выкидывает кириллицу;
-- один `overall` недостаточен, поэтому есть критерии correctness / relevance / completeness / coherence (+ groundedness при `context`);
-- HITL — контур калибровки, а не третий скорер в проде.
+- один `overall` недостаточен — есть критерии и отдельная HITL-разметка по ним;
+- HITL — контур калибровки, а не третий скорер в проде;
+- один LLM-судья нестабилен: поэтому есть ensemble (mean/min) и pairwise swap.
 
 ## Быстрый старт
 
-```powershell
-cd "c:\Users\User\Desktop\Практика_Тюхменев_БФБО-05-24"
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-copy .env.example .env
-uvicorn app.main:app --reload
+```bash
+python scripts/start.py
 ```
 
-Документация API: http://127.0.0.1:8000/docs
+Если окружения ещё нет, скрипт сам создаст `.venv` и поставит зависимости, включая `sentence-transformers`. Порт выбирается автоматически (обычно `8001`). Остановка: `Ctrl+C`.
 
-Если OpenAI-ключ или Ollama недоступны, судья автоматически падает в эвристический fallback. Для отчёта практики этого достаточно; для «настоящего» G-Eval нужен один из провайдеров.
+Документация API: http://127.0.0.1:8001/docs
 
-Семантика по умолчанию считает cosine на мешке слов. Для более сильного сигнала:
-
-```powershell
-pip install sentence-transformers
-```
-
-Модель `paraphrase-multilingual-MiniLM-L12-v2` подхватывается сама.
+Семантика берёт `paraphrase-multilingual-MiniLM-L12-v2`. Если веса лежат в `models/minilm/`, они читаются с диска и HuggingFace не нужен. Если модели нет — fallback на BoW-cosine, это видно в поле `semantic.method`.
 
 ## Провайдер судьи
 
-В `.env`:
+Вкладка **Судья** переключает провайдер на лету: OpenRouter (Gemma и другие), OpenAI-совместимый API, Ollama.
+
+Для устойчивости двух независимых G-Eval:
 
 ```
-JUDGE_PROVIDER=ollama
-OLLAMA_MODEL=llama3.2
+JUDGE_ENSEMBLE=mean
+JUDGE_ENSEMBLE_PROVIDERS=openrouter,ollama
+JUDGE_SWAP_CHECK=false
+POSITION_BIAS_PENALTY=0.08
 ```
 
-или
+`mean` усредняет критерии, `min` берёт пессимистичную оценку. Если `JUDGE_SWAP_CHECK=true`, pointwise гоняется второй раз с переставленными блоками эталон/ответ: при большом Δ overall снижается.
+
+Logprobs, если провайдер их отдаёт, калибруют шкалу 1–5 → 0–1 через ожидание по `top_logprobs`, а не через сжатие к 0.6.
+
+## Агрегатор
+
+При эталоне:
 
 ```
-JUDGE_PROVIDER=openrouter
-OPENROUTER_API_KEY=sk-or-v1-...
-OPENROUTER_MODEL=google/gemma-4-31b-it
+overall = w_sem * cosine + w_lex * lexical + w_judge * judge
 ```
 
-или OpenAI / Ollama:
+Веса в `.env`. Их подбирает `scripts/run_validation.py` grid search по Spearman к HITL, а не «на глаз». На текущем корпусе это `0.00 / 0.00 / 1.00`: смесь с cosine и лексикой снижала ρ относительно чистого судьи.
 
-```
-JUDGE_PROVIDER=openai
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL=gpt-4o-mini
+## Офлайн-валидация
+
+В `data/human_labels.json` — около 60 пар: полные эталоны-предложения, метки по критериям, спорные случаи (многословие, частично верно, галлюцинация, перефраз, лексическая ловушка).
+
+```powershell
+python scripts/run_validation.py --skip-judge
+python scripts/run_validation.py --compare
 ```
 
-Logprobs используются только если их отдаёт провайдер. OpenRouter/Gemma обычно возвращают дискретную оценку 1–5 в JSON.
+`--compare` гоняет **тот же корпус** через heuristics, Gemma (OpenRouter) и Ollama, пишет `reports/judge_compare.md`. На 59 парах (fallback 0%): overall Spearman heuristics **0.459**, Ollama **0.659**, Gemma **0.913** (Pearson 0.977). Гейт `correctness × style` не даёт беглости завышать ложный факт. Grid search выставил `WEIGHT_JUDGE=1.00`. Cosine MiniLM (0.487) не обогнал ROUGE-L (0.556) на всём корпусе: near-miss вроде «Лион» завышается. Ответы судей кэшируются в `reports/judge_cache/`.
+
+BERTScore считается только если установлен пакет `bert-score`; chrF считается всегда (sacrebleu).
 
 ## Эндпоинты
 
 | Метод | Путь | Назначение |
 |---|---|---|
-| GET | `/health` | провайдер и модель судьи |
+| GET | `/health` | провайдер, модель, метод семантики |
+| GET | `/settings` | текущий судья, ключи замаскированы |
+| PUT | `/settings` | сменить провайдера / модель / ключ |
+| POST | `/settings/test` | короткий пробный запрос к судье |
+| GET | `/samples` | демо-пары из `data/sample_eval.json` |
+| POST | `/evaluate/import` | разобрать JSON/JSONL/CSV в пары |
 | POST | `/evaluate` | оценка одного ответа |
-| POST | `/evaluate/batch` | пакетная оценка |
+| POST | `/evaluate/batch` | пакет до 100 пар |
 | POST | `/evaluate/pairwise` | сравнение A/B со свапом позиций |
-| POST | `/validate` | корреляция с ручными метками + bias |
+| POST | `/validate` | корреляция, веса, таблица ошибок |
 
 Пример запроса:
 
@@ -93,39 +102,17 @@ Logprobs используются только если их отдаёт про
 {
   "question": "Что такое столица Франции?",
   "answer": "Столица Франции — Париж.",
-  "reference": "Париж"
+  "reference": "Столица Франции — Париж."
 }
 ```
 
-Поле `skip_judge: true` отключает вызов LLM и считает только лексику, семантику и эвристики.
+`skip_judge: true` отключает LLM и считает лексику, семантику и эвристики.
 
-## Офлайн-валидация
+## Что писать в пояснительной
 
-В `data/human_labels.json` — 40 размеченных пар (хорошие, неполные, многословные и неверные ответы).
-
-```powershell
-python scripts/run_validation.py --skip-judge
-```
-
-Отчёт появится в `reports/validation.md`. Без `--skip-judge` скрипт пойдёт в выбранный LLM-провайдер.
-
-## Структура
-
-```
-app/
-  api/routes.py          эндпоинты
-  evaluators/            лексика, семантика, G-Eval, агрегатор
-  providers/             OpenAI / Ollama
-  validation/            корреляции и bias
-data/
-  sample_eval.json
-  human_labels.json
-scripts/run_validation.py
-```
-
-## Что можно написать в пояснительной
-
-1. Почему BLEU/ROUGE оставлены как baseline, а основной reference-based сигнал — семантический cosine.
-2. Почему G-Eval идёт с рубрикой и JSON, а logprobs — опциональны.
-3. Почему 30–50 ручных меток стоят отдельно от online-пайплайна.
-4. Какие искажения измеряются: verbosity (длина vs оценка), position bias (свап в pairwise), disagreement между слоями.
+1. Почему BLEU/ROUGE — baseline, а cosine MiniLM должен быть ближе к человеку на перефразе.
+2. Почему «качество судьи» проверяется сравнением heuristics vs Gemma vs Ollama на одном корпусе, а не декларацией.
+3. Почему веса агрегатора взяты из grid search по Spearman, а не из `.env` «потому что так принято».
+4. Почему корпус усилен эталонами-предложениями и спорными случаями: иначе метрика упирается в шум разметки.
+5. Как ensemble и position-swap бьют по нестабильности LLM-as-a-Judge.
+6. Почему разбор ошибок сильнее нового графика.

@@ -8,9 +8,12 @@ import numpy as np
 
 from app.schemas import SemanticMetrics
 
+from pathlib import Path
+
 logger = logging.getLogger(__name__)
 
 _TOKEN_RE = re.compile(r"[^\W\d_]+|\d+", re.UNICODE)
+_LOCAL_MODEL = Path(__file__).resolve().parents[2] / "models" / "minilm"
 
 _model = None
 _model_name: str | None = None
@@ -26,12 +29,14 @@ def compute_semantic(
         return SemanticMetrics(cosine=None, method=None)
 
     embedding = _try_embedding_cosine(answer, reference, model_name)
+    bertscore = _try_bertscore(answer, reference)
     if embedding is not None:
-        return SemanticMetrics(cosine=embedding, method="sentence-transformers")
+        return SemanticMetrics(cosine=embedding, method="sentence-transformers", bertscore=bertscore)
 
     return SemanticMetrics(
         cosine=_bow_cosine(answer, reference),
         method="bow-cosine",
+        bertscore=bertscore,
     )
 
 
@@ -62,9 +67,41 @@ def _load_embedding_model(model_name: str):
     global _model, _model_name
     from sentence_transformers import SentenceTransformer
 
-    _model = SentenceTransformer(model_name)
+    source = model_name
+    weights = _LOCAL_MODEL / "model.safetensors"
+    if weights.exists() and weights.stat().st_size > 400_000_000:
+        source = str(_LOCAL_MODEL)
+    _model = SentenceTransformer(source)
     _model_name = model_name
     return _model
+
+
+def probe_semantic_method() -> str:
+    try:
+        import sentence_transformers  # noqa: F401
+
+        return "sentence-transformers"
+    except Exception:  # noqa: BLE001
+        return "bow-cosine"
+
+
+def _try_bertscore(answer: str, reference: str) -> float | None:
+    try:
+        from bert_score import score as bert_score
+    except Exception:  # noqa: BLE001
+        return None
+    try:
+        _precision, _recall, f1 = bert_score(
+            [answer],
+            [reference],
+            lang="ru",
+            verbose=False,
+            rescale_with_baseline=False,
+        )
+        return round(max(0.0, min(1.0, float(f1[0].item()))), 4)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("BERTScore недоступен: %s", exc)
+        return None
 
 
 def _bow_cosine(answer: str, reference: str) -> float:
